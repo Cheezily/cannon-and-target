@@ -32,9 +32,53 @@ $(document).ready(function() {
   var leftLimit = fieldWidth * .5;
   var rightLimit = fieldWidth * .9;
 
-  function targetMove(startX, startY, endX, endY) {
-    
+  function targetMove(moveX, moveY, times, speed) {
+    setTimeout(function() {
 
+
+      console.log('moveX: ' + moveX);
+      console.log('moveY: ' + moveY);
+
+      var moveToXpx = (parseInt($('.target').css('left')) - moveX).toString() + 'px';
+      var moveToYpx = (parseInt($('.target').css('top')) - moveY).toString() + 'px';
+
+
+      console.log('moveToXpx: ' + moveToXpx);
+      console.log('moveToYpx: ' + moveToYpx);
+
+      if (times > 0) {
+        $('.target').css({'top': moveToYpx,
+          'left': moveToXpx});
+        times--;
+        targetMove(moveX, moveY, times, speed);
+      } else {
+        newMovement(parseInt($('.target').css('left'), parseInt($('.target').css('top'))));
+      }
+    }, speed);
 
   }
+
+  function newMovement(posX, posY) {
+    var randX = Math.floor(Math.random() * (rightLimit - leftLimit) + rightLimit);
+    var randY = Math.floor(Math.random() * (bottomLimit - topLimit) + topLimit);
+
+    var times = 50;
+
+    var moveX = (randX - parseInt(parseInt($('.target').css('left')))) / times;
+    var moveY = (randY - parseInt(parseInt($('.target').css('top')))) / times;
+
+    var speed = 10;
+
+    console.log('sendX: ' + randX);
+    console.log('sendY: ' + randY);
+
+    if (moveX < leftLimit || moveX > rightLimit) {moveX = moveX * - 1}
+    if (moveY < topLimit || moveX > bottomLimit) {moveX = moveX * - 1}
+
+
+    targetMove(moveX, moveY, times, speed);
+  }
+
+
+  newMovement(parseInt($('.target').css('left'), parseInt($('.target').css('top'))));
 })
