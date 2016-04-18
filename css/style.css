@@ -5,11 +5,26 @@
   height: 100%;
 }
 
-.cannon {
+.cannonContainer {
   position: absolute;
   top: 0;
   left: 0;
+
+}
+
+.cannon {
   border: 1px solid green;
+  float: right;
+}
+
+.muzzle {
+  float: right;
+  width: 1;
+  height: 100%;
+  border: 1px solid red;
+}
+.muzzle:after {
+  clear: both;
 }
 
 .target {
