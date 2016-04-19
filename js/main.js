@@ -15,31 +15,52 @@ $(document).ready(function() {
   var targetTop = parseInt(fieldHeight * .75).toString() + 'px';
   var targetWidth = parseInt(fieldHeight * .10).toString() + 'px';
   var targetHeight = parseInt(fieldHeight * .10).toString() + 'px';
+
+  var topLimit = fieldHeight * .2;
+  var bottomLimit = fieldHeight * .90;
+  var leftLimit = fieldWidth * .4;
+  var rightLimit = fieldWidth * .9;
+
   var degrees = 0;
+  var radians = 0;
+  var shotsTaken = 0;
+  var shellSpeed = 45;
+  var fireDelay = 500;
+
+  var shells = [];
 
   console.log('cannonleft: ' + cannonContainerLeft);
   console.log('top: ' + cannonTop);
   console.log('width: ' + cannonWidth);
   console.log('height: ' + cannonHeight);
 
-  $('.cannonContainer').css({'top': cannonTop,
+  $('.cannonContainer').css({
+    'top': cannonTop,
     'left': cannonContainerLeft,
     'width': cannonContainerWidth,
-    'height': cannonHeight});
+    'height': cannonHeight
+  });
 
   $('.cannon').css({
     'width': cannonWidth,
-    'height': cannonHeight});
+    'height': cannonHeight
+  });
 
-  $('.target').css({'top': targetTop,
+  $('.shell').css({
+    'height': cannonHeight * .8
+  })
+
+  $('.target').css({
+    'top': targetTop,
     'left': targetLeft,
     'width': targetWidth,
-    'height': targetHeight});
+    'height': targetHeight
+  });
+
 
   $(document).mousemove(function(event) {
-    //console.log('MOUSE-X: ' + event.pageX);
-    //console.log(cannonTopRaw - event.pageY);
-    var radians = Math.atan2((event.pageX - (cannonContainerLeftRaw +
+
+    radians = Math.atan2((event.pageX - (cannonContainerLeftRaw +
       parseInt(cannonWidth))), (cannonTopRaw - event.pageY));
 
     degrees = radians * (180 / Math.PI) - 90;
@@ -51,14 +72,53 @@ $(document).ready(function() {
 
   });
 
-  $(document).click(function() {
 
-  })
+  function loadCannon() {
 
-  var topLimit = fieldHeight * .2;
-  var bottomLimit = fieldHeight * .90;
-  var leftLimit = fieldWidth * .4;
-  var rightLimit = fieldWidth * .9;
+     $('.container').click(function() {
+
+      shotsTaken++;
+
+      var muzzleTop = $('.muzzle').offset().top;
+      var muzzleLeft = $('.muzzle').offset().left;
+
+      //console.log('muzzleTop: ' + muzzleTop);
+      //console.log('muzzleLeft: ' + muzzleLeft);
+
+      shells.push({
+        'deg': degrees + 90,
+        'currentX': muzzleLeft,
+        'currentY': muzzleTop,
+        'moveX': Math.cos(radians - Math.PI / 2) * shellSpeed,
+        'moveY': Math.sin(radians - Math.PI / 2) * shellSpeed,
+        'id': shotsTaken,
+        'previousX': 0,
+        'previousY': 0
+      })
+
+      var shellID = '#shellNum' + (shotsTaken);
+
+      $('.container').append("<div class='shell' id='shellNum" +
+        (shotsTaken) + "' style='top: " + muzzleTop + "px; left: " + muzzleLeft + "px;' >" +
+        "<img src='images/cat.gif'></div>");
+      $(shellID).css({'-webkit-transform' : 'rotate('+ degrees +'deg)',
+               '-moz-transform' : 'rotate('+ degrees +'deg)',
+               '-ms-transform' : 'rotate('+ degrees +'deg)',
+               'transform' : 'rotate('+ degrees +'deg)'});
+
+      //console.log(shells);
+
+      //$('.container').off();
+    });
+
+/*
+    setTimeout(function() {
+      loadCannon();
+    }, fireDelay);
+*/
+  }
+
+
 
   function targetMove(moveX, moveY, times, speed) {
 
@@ -80,20 +140,22 @@ $(document).ready(function() {
         if (currentY >= bottomLimit && moveY > 0) {moveY *= -1;}
         if (currentY <= topLimit && moveY < 0) {moveY *= -1;}
 
+
+        shellsMove();
         targetMove(moveX, moveY, times, speed);
 
       } else {
-        var moveMax = 30;
-        var moveMin = 5;
-        var timesMax = 40;
-        var timesMin = 5;
+        var moveMax = 50;
+        var moveMin = 10;
+        var timesMax = 35;
+        var timesMin = 15;
 
         moveX = Math.floor((Math.random() * (moveMax - moveMin + 1) + moveMin));
-        //moveX = Math.floor(Math.random() * moveMax) + 1;
         if (Math.random() * 2 >= 1) moveX *= -1;
+
         moveY = Math.floor((Math.random() * (moveMax - moveMin + 1) + moveMin));
-        //moveY = Math.floor(Math.random() * moveMax) + 1;
         if (Math.random() * 2 >= 1) moveY *= -1;
+
         times = Math.floor((Math.random() * (timesMax - timesMin + 1) + timesMin));
         speed = 10;
 
@@ -105,6 +167,44 @@ $(document).ready(function() {
   }
 
 
+  function shellsMove() {
 
-  targetMove(1, 1, 10, 10);
+    var toDelete = [];
+
+    //console.log('SHELLS: ' + shells.length);
+    if (shells.length > 0) {
+      for (var i = 0; i < shells.length; i++) {
+        var currentX = shells[i].currentX;
+        var currentY = shells[i].currentY;
+        var moveX = shells[i].moveX;
+        var moveY = shells[i].moveY;
+        var moveToXpx = (currentX + moveX).toString() + 'px';
+        var moveToYpx = (currentY + moveY).toString() + 'px';
+        shells[i].currentX += moveX;
+        shells[i].currentY += moveY;
+
+        var shellID = "#shellNum" + shells[i].id;
+
+        $(shellID).css({'top': moveToYpx, 'left': moveToXpx});
+
+        if (currentX < -200 ||
+          currentX > fieldWidth + 300 ||
+          currentY < -200 ||
+          currentY > fieldHeight + 300) {
+          //$(shellID).remove();
+          toDelete.push(i);
+        }
+
+      }
+    }
+
+    for (var i = 0; i < toDelete.length; i++) {
+      var shellID = "#shellNum" + shells[i].id;
+      $(shellID).remove();
+      shells.splice(toDelete[i], 1);
+    }
+  }
+
+  targetMove(1, 1, 1, 10);
+  loadCannon();
 })

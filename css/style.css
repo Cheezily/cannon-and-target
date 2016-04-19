@@ -1,3 +1,7 @@
+body {
+  overflow: hidden;
+}
+
 .container {
   margin: 0;
   padding: 0;
@@ -9,7 +13,6 @@
   position: absolute;
   top: 0;
   left: 0;
-
 }
 
 .cannon {
@@ -19,9 +22,8 @@
 
 .muzzle {
   float: right;
-  width: 1;
-  height: 100%;
-  border: 1px solid red;
+  width: 0;
+  height: 0;
 }
 .muzzle:after {
   clear: both;
@@ -32,4 +34,13 @@
   top: 0;
   left: 0;
   border: 1px solid purple;
+}
+
+.loadImage {
+  display: none;
+}
+
+.shell {
+  position: absolute;
+  selection: none;
 }
