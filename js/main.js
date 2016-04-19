@@ -192,14 +192,14 @@ $(document).ready(function() {
           currentY < -200 ||
           currentY > fieldHeight + 300) {
           //$(shellID).remove();
-          toDelete.push(i);
+          toDelete.push([i, shells[i].id]);
         }
 
       }
     }
 
     for (var i = 0; i < toDelete.length; i++) {
-      var shellID = "#shellNum" + shells[i].id;
+      var shellID = "#shellNum" + toDelete[i][1];
       $(shellID).remove();
       shells.splice(toDelete[i], 1);
     }
