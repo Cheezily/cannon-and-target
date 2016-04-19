@@ -25,7 +25,7 @@ $(document).ready(function() {
   var radians = 0;
   var shotsTaken = 0;
   var shellSpeed = 45;
-  var fireDelay = 500;
+  var fireDelay = 100;
 
   var shells = [];
 
@@ -75,47 +75,59 @@ $(document).ready(function() {
 
   function loadCannon() {
 
-     $('.container').click(function() {
+     $('.container').mousedown(function() {
 
-      shotsTaken++;
+      var stopFiring = false;
 
-      var muzzleTop = $('.muzzle').offset().top;
-      var muzzleLeft = $('.muzzle').offset().left;
+      function fire() {
 
-      //console.log('muzzleTop: ' + muzzleTop);
-      //console.log('muzzleLeft: ' + muzzleLeft);
+        if (!stopFiring) {
+          shotsTaken++;
 
-      shells.push({
-        'deg': degrees + 90,
-        'currentX': muzzleLeft,
-        'currentY': muzzleTop,
-        'moveX': Math.cos(radians - Math.PI / 2) * shellSpeed,
-        'moveY': Math.sin(radians - Math.PI / 2) * shellSpeed,
-        'id': shotsTaken,
-        'previousX': 0,
-        'previousY': 0
+          var muzzleTop = $('.muzzle').offset().top;
+          var muzzleLeft = $('.muzzle').offset().left;
+
+          shells.push({
+            'deg': degrees + 90,
+            'currentX': muzzleLeft,
+            'currentY': muzzleTop,
+            'moveX': Math.cos(radians - Math.PI / 2) * shellSpeed,
+            'moveY': Math.sin(radians - Math.PI / 2) * shellSpeed,
+            'id': shotsTaken,
+            'previousX': 0,
+            'previousY': 0
+          })
+
+          var shellID = '#shellNum' + (shotsTaken);
+
+          $('.container').append("<div class='shell' id='shellNum" +
+            (shotsTaken) + "' style='top: " + muzzleTop + "px; left: " + muzzleLeft + "px;' >" +
+            "<img src='images/cat.gif'></div>");
+          $(shellID).css({'-webkit-transform' : 'rotate('+ degrees +'deg)',
+                   '-moz-transform' : 'rotate('+ degrees +'deg)',
+                   '-ms-transform' : 'rotate('+ degrees +'deg)',
+                   'transform' : 'rotate('+ degrees +'deg)'});
+
+        }
+
+
+        if (!stopFiring) {
+          setTimeout(function() {
+            fire();
+          }, fireDelay);
+        }
+
+      }
+
+      $('.container').mouseup(function() {
+        stopFiring = true;
       })
 
-      var shellID = '#shellNum' + (shotsTaken);
-
-      $('.container').append("<div class='shell' id='shellNum" +
-        (shotsTaken) + "' style='top: " + muzzleTop + "px; left: " + muzzleLeft + "px;' >" +
-        "<img src='images/cat.gif'></div>");
-      $(shellID).css({'-webkit-transform' : 'rotate('+ degrees +'deg)',
-               '-moz-transform' : 'rotate('+ degrees +'deg)',
-               '-ms-transform' : 'rotate('+ degrees +'deg)',
-               'transform' : 'rotate('+ degrees +'deg)'});
-
       //console.log(shells);
+      fire();
 
-      //$('.container').off();
     });
 
-/*
-    setTimeout(function() {
-      loadCannon();
-    }, fireDelay);
-*/
   }
 
 
