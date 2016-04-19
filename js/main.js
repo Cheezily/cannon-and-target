@@ -2,6 +2,7 @@ $(document).ready(function() {
   var fieldWidth = parseInt($('.container').css('width'));
   var fieldHeight = parseInt($('.container').css('height'));
 
+  // TODO: these need to be presented more cleanly
   var cannonContainerLeftRaw = parseInt(fieldWidth * .05);
   var cannonContainerLeft = cannonContainerLeftRaw.toString() + 'px';
   var cannonTopRaw = parseInt(fieldHeight * .9);
@@ -24,7 +25,7 @@ $(document).ready(function() {
   var degrees = 0;
   var radians = 0;
   var shotsTaken = 0;
-  var shellSpeed = 45;
+  var shellSpeed = 35;
   var fireDelay = 100;
 
   var shells = [];
@@ -47,7 +48,7 @@ $(document).ready(function() {
   });
 
   $('.shell').css({
-    'height': cannonHeight * .8
+    'height': (cannonHeightRaw * .4) + 'px'
   })
 
   $('.target').css({
@@ -75,13 +76,18 @@ $(document).ready(function() {
 
   function loadCannon() {
 
+    var shots = [];
+    var removeInProgress = false;
+
      $('.container').mousedown(function() {
 
       var stopFiring = false;
 
+
       function fire() {
 
         if (!stopFiring) {
+
           shotsTaken++;
 
           var muzzleTop = $('.muzzle').offset().top;
@@ -98,6 +104,8 @@ $(document).ready(function() {
             'previousY': 0
           })
 
+          shots.push("#shellNum" + shotsTaken);
+
           var shellID = '#shellNum' + (shotsTaken);
 
           $('.container').append("<div class='shell' id='shellNum" +
@@ -107,27 +115,33 @@ $(document).ready(function() {
                    '-moz-transform' : 'rotate('+ degrees +'deg)',
                    '-ms-transform' : 'rotate('+ degrees +'deg)',
                    'transform' : 'rotate('+ degrees +'deg)'});
-
         }
 
-
-        if (!stopFiring) {
           setTimeout(function() {
             fire();
           }, fireDelay);
-        }
-
       }
+
 
       $('.container').mouseup(function() {
         stopFiring = true;
+        removeInProgress = true;
+
+        // remove the shots taken from the DOM. removeInProgress needed so
+        // it doens't remove shots from a new batch just fired
+        if (!removeInProgress) {
+          setTimeout(function() {
+            for (shot in shots) {
+              $(shots[shot]).remove();
+            }
+            removeInProgress = false;
+          }, (200 - shellSpeed) * 15)
+        }
+
       })
 
-      //console.log(shells);
       fire();
-
     });
-
   }
 
 
@@ -143,6 +157,7 @@ $(document).ready(function() {
       var moveToYpx = (currentY + moveY).toString() + 'px';
 
       if (times > 0) {
+
         $('.target').css({'top': moveToYpx,'left': moveToXpx});
 
         times--;
@@ -151,7 +166,6 @@ $(document).ready(function() {
         if (currentX <= leftLimit && moveX < 0) {moveX *= -1;}
         if (currentY >= bottomLimit && moveY > 0) {moveY *= -1;}
         if (currentY <= topLimit && moveY < 0) {moveY *= -1;}
-
 
         shellsMove();
         targetMove(moveX, moveY, times, speed);
@@ -175,7 +189,6 @@ $(document).ready(function() {
       }
 
     }, speed);
-
   }
 
 
@@ -199,23 +212,26 @@ $(document).ready(function() {
 
         $(shellID).css({'top': moveToYpx, 'left': moveToXpx});
 
+        // adds shells that went off the screen to the toDelete array
         if (currentX < -200 ||
           currentX > fieldWidth + 300 ||
           currentY < -200 ||
           currentY > fieldHeight + 300) {
-          //$(shellID).remove();
+
           toDelete.push([i, shells[i].id]);
         }
-
       }
     }
 
+    // processes the toDelete array. Needed to remove shells
+    // if the user doesn't stop firing
     for (var i = 0; i < toDelete.length; i++) {
       var shellID = "#shellNum" + toDelete[i][1];
       $(shellID).remove();
       shells.splice(toDelete[i], 1);
     }
   }
+
 
   targetMove(1, 1, 1, 10);
   loadCannon();
