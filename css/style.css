@@ -16,15 +16,23 @@ body {
 }
 
 .cannon {
-  border: 1px solid green;
+  background: #333;
   float: right;
+  border-bottom-left-radius: 30%;
+  border-top-left-radius: 30%;
 }
 
 .muzzle {
   float: right;
   width: 0;
   height: 0;
+  border: 1px solid blue;
+  padding: 0;
+  margin-right: 0%;
+  margin-top: -4%;
+  margin-bottom: 0;
 }
+
 .muzzle:after {
   clear: both;
 }
@@ -43,4 +51,5 @@ body {
 .shell {
   position: absolute;
   selection: none;
+  z-index: -1;
 }

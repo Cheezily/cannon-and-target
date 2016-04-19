@@ -26,7 +26,7 @@ $(document).ready(function() {
   var radians = 0;
   var shotsTaken = 0;
   var shellSpeed = 35;
-  var fireDelay = 100;
+  var fireDelay = 200;
 
   var shells = [];
 
@@ -125,15 +125,15 @@ $(document).ready(function() {
 
       $('.container').mouseup(function() {
         stopFiring = true;
-        removeInProgress = true;
 
         // remove the shots taken from the DOM. removeInProgress needed so
         // it doens't remove shots from a new batch just fired
         if (!removeInProgress) {
+
+          removeInProgress = true;
+
           setTimeout(function() {
-            for (shot in shots) {
-              $(shots[shot]).remove();
-            }
+            $('.shell').remove();
             removeInProgress = false;
           }, (200 - shellSpeed) * 15)
         }
