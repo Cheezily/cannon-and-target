@@ -28,6 +28,8 @@ $(document).ready(function() {
   var shellSpeed = 35;
   var fireDelay = 200;
 
+  var flipCannon = 1;
+
   var shells = [];
 
   console.log('cannonleft: ' + cannonContainerLeft);
@@ -65,11 +67,37 @@ $(document).ready(function() {
       parseInt(cannonWidth))), (cannonTopRaw - event.pageY));
 
     degrees = radians * (180 / Math.PI) - 90;
-    //console.log(degrees);
+    console.log(degrees);
+
+    if (degrees < -90 && flipCannon == 1) {
+      flipCannon = -1;
+      if (flipCannon == -1) {
+        console.log("negative");
+        $('.cannon').css({'transform': 'scaleY(-1)'});
+        $('img').css({'transform': 'scaleY(-1)'});
+      }
+
+    }
+
+    if (degrees >= -90 && flipCannon == -1) {
+      flipCannon = 1;
+      if (flipCannon == 1) {
+        console.log("positive");
+        $('.cannon').css({'transform': 'scaleY(1)'});
+        $('img').css({'transform': 'scaleY(-1)'});
+      }
+    }
+
+
     $('.cannonContainer').css({'-webkit-transform' : 'rotate('+ degrees +'deg)',
              '-moz-transform' : 'rotate('+ degrees +'deg)',
              '-ms-transform' : 'rotate('+ degrees +'deg)',
              'transform' : 'rotate('+ degrees +'deg)'});
+
+    $('.muzzle').css({'-webkit-transform' : 'rotate('+ degrees +'deg)',
+            '-moz-transform' : 'rotate('+ degrees +'deg)',
+            '-ms-transform' : 'rotate('+ degrees +'deg)',
+            'transform' : 'rotate('+ degrees +'deg)'});
 
   });
 

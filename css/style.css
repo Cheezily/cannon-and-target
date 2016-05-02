@@ -2,6 +2,10 @@ body {
   overflow: hidden;
 }
 
+img {
+
+}
+
 .container {
   margin: 0;
   padding: 0;
@@ -18,8 +22,8 @@ body {
 .cannon {
   background: #333;
   float: right;
-  border-bottom-left-radius: 30%;
-  border-top-left-radius: 30%;
+  border-bottom-left-radius: 70%;
+  border-top-left-radius: 10%;
 }
 
 .muzzle {
