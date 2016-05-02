@@ -49,9 +49,10 @@ $(document).ready(function() {
     'height': cannonHeight
   });
 
-  $('.shell').css({
+/*  $('.shell').css({
     'height': (cannonHeightRaw * .4) + 'px'
   })
+*/
 
   $('.target').css({
     'top': targetTop,
@@ -61,6 +62,8 @@ $(document).ready(function() {
   });
 
 
+
+
   $(document).mousemove(function(event) {
 
     radians = Math.atan2((event.pageX - (cannonContainerLeftRaw +
@@ -68,6 +71,7 @@ $(document).ready(function() {
 
     degrees = radians * (180 / Math.PI) - 90;
     console.log(degrees);
+
 
     if (degrees < -90 && flipCannon == 1) {
       flipCannon = -1;
@@ -144,6 +148,11 @@ $(document).ready(function() {
                    '-ms-transform' : 'rotate('+ degrees +'deg)',
                    'transform' : 'rotate('+ degrees +'deg)'});
         }
+
+          //the shell class has to be the right size for the shell to come out
+          //of the front of the muzzle element
+          $('.shell').css({'height': parseInt(fieldHeight * .01).toString() + 'px'});
+          $('img').css({'height': parseInt(fieldHeight * .05).toString() + 'px'});
 
           setTimeout(function() {
             fire();
